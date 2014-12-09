@@ -50,14 +50,25 @@
 
     };
 
-    var success = function(data, reenable) {
+    var setInflight = function(isInflight) {
 
-        if (reenable) {
+        if (isInflight) {
+            $("#main").addClass("inflight");
+            $("#entry").attr("disabled", true);
+        } else {
             $("#main").removeClass("inflight");
             $("#entry")
                 .attr("disabled", false)
                 .val("")
                 .blur();
+        }
+
+    };
+
+    var success = function(data, reenable) {
+
+        if (reenable) {
+            setInflight(false);
         }
 
         for (var i = data.length-1; i >= 0; --i) {
@@ -67,7 +78,10 @@
     };
 
     var error = function() {
-        console.log("error");
+        
+        setInflight(false);
+        alert("An unexpected error occurred. Try again?");
+
     };
 
     var badAuth = function() {
@@ -78,7 +92,6 @@
         disableLogin();
 
     };
-    window.badAuth = badAuth;
 
     var submit = function() {
         
@@ -89,8 +102,7 @@
             return;
         }
 
-        $("#entry").attr("disabled", true);
-        $("#main").addClass("inflight");
+        setInflight(true);
 
         $.ajax("/submit", {
             "type": "POST",
