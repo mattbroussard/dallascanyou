@@ -37,11 +37,11 @@ def facebookInitHandler():
 def rootHandler():
     return app.send_static_file('index.html')
 
-def dummyResponse(content='implement the backend'):
-    now = datetime.datetime.now().isoformat()
+def dummyResponse(content='implement the backend', userID='mattbroussard'):
+    now = datetime.datetime.utcnow().isoformat() + "+0000"
     return json.dumps([{
         'userID': 'mattbroussard',
-        'authorName': 'Matt B.',
+        'authorName': 'Your Name Here (requires additional FB API call)',
         'timestamp': now,
         'content': content,
     }])
@@ -50,7 +50,7 @@ def dummyResponse(content='implement the backend'):
 @app.route("/submit", methods=['POST'])
 def submitHandler():
     return Response(
-        dummyResponse(request.form['message']),
+        dummyResponse(request.form['message'], request.form['userID']),
         mimetype='application/json'
     )
 
