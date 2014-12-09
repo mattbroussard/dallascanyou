@@ -37,11 +37,11 @@ def facebookInitHandler():
 def rootHandler():
     return app.send_static_file('index.html')
 
-def dummyResponse(content='implement the backend', userID='mattbroussard'):
+def dummyResponse(content='implement the backend', userID='mattbroussard', authorName='Your Name Here (requires additional FB API call)'):
     now = datetime.datetime.utcnow().isoformat() + "+0000"
     return json.dumps([{
-        'userID': 'mattbroussard',
-        'authorName': 'Your Name Here (requires additional FB API call)',
+        'userID': userID,
+        'authorName': authorName,
         'timestamp': now,
         'content': content,
     }])
@@ -58,7 +58,7 @@ def submitHandler():
 def historyHandler():
     now = datetime.datetime(2014, 12, 5).isoformat()
     return Response(
-        dummyResponse(),
+        dummyResponse(authorName='Matt B.'),
         mimetype='application/json'
     )
 
