@@ -46,7 +46,13 @@
 
     };
 
+    var disableLogin = function() {
+        loggedIn = false;
+        authResponse = null;
+    };
+
     window.onFBLoginCallback = updateLoginStatus;
     window.getFBUserInfo = loginInfo;
+    window.disableLogin = disableLogin;
 
 })();

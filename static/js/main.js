@@ -5,8 +5,6 @@
 
     var loginWarn = function() {
 
-        console.log("loginWarn called");
-
         $("#login").addClass("login_warning");
         
         $("#main").stop(true).animate({"left": "-30px"}, 70, "swing", function() {
@@ -17,9 +15,75 @@
 
     };
 
+    var displayPost = function(post) {
+
+        // TODO: use React?
+
+        var postDiv = $("<div>").addClass("post");
+
+        var portrait = $("<img>")
+            .addClass("portrait")
+            .attr("src", "http://graph.facebook.com/"+post.userID+"/picture?width=128")
+            .appendTo(postDiv);
+        
+        var meta = $("<div>")
+            .addClass("meta")
+            .appendTo(postDiv);
+        var author = $("<h3>")
+            .addClass("author")
+            .text(post.authorName)
+            .appendTo(meta);
+        var timestamp = $("<span>")
+            .addClass("timestamp")
+            .text("Loading...")
+            .attr("title", post.timestamp)
+            .appendTo(meta)
+            .timeago();
+
+        var content = $("<p>")
+            .addClass("content")
+            .text("Dallas, can you " + post.content + "?")
+            .appendTo(postDiv);
+
+        $("#posts .post.empty").remove();
+        postDiv.prependTo("#posts");
+
+    };
+
+    var success = function(data, reenable) {
+
+        if (reenable) {
+            $("#main").removeClass("inflight");
+            $("#entry")
+                .attr("disabled", false)
+                .val("")
+                .blur();
+        }
+
+        for (var i = data.length-1; i >= 0; --i) {
+            displayPost(data[i]);
+        }
+
+    };
+
+    var error = function() {
+        console.log("error");
+    };
+
+    var badAuth = function() {
+
+        $("#login .fb-login-button").hide();
+        $("#login_message").text("Sorry, only friends of Dallas may ask him to do things.");
+        loginWarn();
+        disableLogin();
+
+    };
+    window.badAuth = badAuth;
+
     var submit = function() {
         
         var userInfo = window.getFBUserInfo();
+        var message = $("#entry").val();
         if (!userInfo) {
             loginWarn();
             return;
@@ -27,6 +91,26 @@
 
         $("#entry").attr("disabled", true);
         $("#main").addClass("inflight");
+
+        $.ajax("/submit", {
+            "type": "POST",
+            "cache": false,
+            "success": function(data, textStatus, jqXHR) {
+                if (data.success) {
+                    success(data, true);
+                } else if (data.badauth) {
+                    badAuth();
+                }
+            },
+            "error": function(data, textStatus, jqXHR) {
+                error({"error": textStatus});
+            },
+            "data": {
+                "userID": userInfo.userID,
+                "accessToken": userInfo.accessToken,
+                "message": message
+            }
+        });
 
     };
 
@@ -56,6 +140,17 @@
             top: '67px',
             left: '1110px'
         }).spin($("#spinner")[0]);
+
+        $.ajax("/history", {
+            "cache": false,
+            "type": "GET",
+            "success": function(data, textStatus, jqXHR) {
+                success(data, false);
+            },
+            "error": function(data, textStatus, jqXHR) {
+                $("#posts .post.empty:first").text("An error occurred while loading posts.");
+            }
+        });
 
     });
 
