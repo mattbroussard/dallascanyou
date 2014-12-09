@@ -13,6 +13,7 @@ def facebookInit():
             appId: '%s',
             xfbml: true,
             status: true,
+            cookie: true,
             version: 'v2.2'
         });
         FB.getLoginStatus(window.onFBLoginCallback);
