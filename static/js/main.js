@@ -35,7 +35,7 @@
             .appendTo(meta);
         var timestamp = $("<span>")
             .addClass("timestamp")
-            .text("Loading...")
+            .text(post.timestamp)
             .attr("title", post.timestamp)
             .appendTo(meta)
             .timeago();
