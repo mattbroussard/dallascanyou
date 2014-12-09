@@ -108,10 +108,10 @@
             "type": "POST",
             "cache": false,
             "success": function(data, textStatus, jqXHR) {
-                if (data.success) {
-                    success(data, true);
-                } else if (data.badauth) {
+                if (data.badauth) {
                     badAuth();
+                } else {
+                    success(data, true);
                 }
             },
             "error": function(data, textStatus, jqXHR) {
