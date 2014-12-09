@@ -4,8 +4,16 @@
     var loggedIn = false;
     var authResponse = null;
 
+    var loginInfo = function() {
+        return loggedIn ? {
+            userID: authResponse.userID,
+            accessToken: authResponse.accessToken
+        } : null;
+    };
+
     var updateLoginStatus = function(response) {
 
+        $("#login").removeClass("login_warning");
         authResponse = response.authResponse;
 
         if (response.status == "connected") {    
@@ -39,5 +47,6 @@
     };
 
     window.onFBLoginCallback = updateLoginStatus;
+    window.getFBUserInfo = loginInfo;
 
 })();

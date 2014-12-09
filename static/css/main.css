@@ -14,6 +14,7 @@ body {
 #main {
     text-align: center;
     margin-top: 25%;
+    position: relative;
 }
 
 #main h1 {
@@ -30,13 +31,23 @@ body {
 #entry {
     font-size: 40pt;
     background-color: #fff;
-    color: #3498db; //#7f8c8d;
+    color: #3498db;
     margin-left: 10px;
     margin-right: 10px;
     display: inline-block;
     width: 560px;
     text-indent: 9px;
 }
+
+.inflight #entry {
+    opacity: 0.5;
+    color: #7f8c8d;
+    border: 1px solid;
+    -webkit-transition: opacity 0.1s linear, color 0.1s linear;
+}
+
+#spinner { display: none; }
+.inflight #spinner { display: block; }
 
 #suffix {
     display: inline-block;
@@ -79,6 +90,11 @@ body {
     border-radius: 3px;
     margin-right: 5px;
     margin-left: 5px;
+}
+
+.login_warning {
+    color: red;
+    font-weight: bold;
 }
 
 #history {

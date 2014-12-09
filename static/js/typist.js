@@ -1,6 +1,6 @@
 
 (function() {
-    
+
     var phrases = [
         "take out the trash",
         "turn off the lights",
