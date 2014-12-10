@@ -77,7 +77,7 @@
 
     };
 
-    var error = function() {
+    var error = function(data) {
         
         setInflight(false);
         alert("An unexpected error occurred. Try again?");
@@ -90,6 +90,9 @@
         $("#login_message").text("Sorry, only friends of Dallas may ask him to do things.");
         loginWarn();
         disableLogin();
+        
+        // not setInflight(false) because we don't want to allow the user to try again without reloading
+        $("#spinner").hide();
 
     };
 
@@ -108,7 +111,7 @@
             "type": "POST",
             "cache": false,
             "success": function(data, textStatus, jqXHR) {
-                if (data.badauth) {
+                if (data.badAuth) {
                     badAuth();
                 } else {
                     success(data, true);

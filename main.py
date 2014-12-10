@@ -2,6 +2,7 @@
 
 import os, datetime, json
 from flask import Flask, Response, request
+import facebook
 from db import DB
 
 app = Flask(__name__, static_url_path='')
@@ -46,17 +47,56 @@ def facebookInitHandler():
 def rootHandler():
     return app.send_static_file('index.html')  
 
+def parseName(meObj):
+    if "first_name" not in meObj or "last_name" not in meObj or meObj["first_name"] == meObj["last_name"]:
+        return meObj["name"]
+    return "%s %s." % (meObj["first_name"], meObj["last_name"][0])
+
+# returns a string containing the user's name if successful, None otherwise
+def verifyIdentity(accessToken, userID):
+    fb = facebook.GraphAPI(accessToken)
+    
+    legal = os.environ.get("AUTHORIZED_FB_FRIENDS", "").split(",")
+    foundFriend = False
+    
+    for friend in legal:
+        if friend == userID:
+            foundFriend = True
+            break
+
+        result = fb.get_connections("me", "friends/%s" % friend)
+        if len(result["data"]) > 0:
+            foundFriend = True
+            break
+    
+    if not foundFriend:
+        return None
+
+    me = fb.get_object("me")
+
+    if "id" not in me or me["id"] != userID:
+        return None
+
+    return parseName(me)
+
 @app.route("/submit", methods=['POST'])
 def submitHandler():
     now = datetime.datetime.utcnow().isoformat() + "+0000"
+    name = verifyIdentity(request.form["accessToken"], request.form["userID"])
+
+    if not name:
+        return JSONResponse({"badAuth": True})
+
     entry = {
         "userID": request.form["userID"],
         "content": request.form["content"],
-        "authorName": "This is a test",
+        "authorName": name,
         "timestamp": now
     }
+
     with DB() as db:
         db.put(entry)
+    
     return JSONResponse([entry])
 
 @app.route("/history")
