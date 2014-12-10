@@ -3,6 +3,7 @@
 import os, datetime, json
 from flask import Flask, Response, request
 import facebook
+from twilio.rest import TwilioRestClient
 from db import DB
 
 app = Flask(__name__, static_url_path='')
@@ -47,6 +48,22 @@ def facebookInitHandler():
 def rootHandler():
     return app.send_static_file('index.html')  
 
+def sendText(content, name):
+    sid = os.environ.get("TWILIO_ACCOUNT_SID", "")
+    authToken = os.environ.get("TWILIO_AUTH_TOKEN", "")
+    src = os.environ.get("TWILIO_PHONE", "")
+    dest = os.environ.get("DEST_PHONE", "")
+    client = TwilioRestClient(sid, authToken)
+
+    body = "Dallas, can you %s? -%s (via http://j.mp/dallascan)" % (content, name)
+
+    client.messages.create(
+        body=body,
+        to=dest,
+        from_=src,
+    )
+
+
 def parseName(meObj):
     if "first_name" not in meObj or "last_name" not in meObj or meObj["first_name"] == meObj["last_name"]:
         return meObj["name"]
@@ -57,12 +74,16 @@ def verifyIdentity(accessToken, userID):
     fb = facebook.GraphAPI(accessToken)
     
     legal = os.environ.get("AUTHORIZED_FB_FRIENDS", "").split(",")
+    whitelistMode = os.environ.get("AUTHORIZATION_MODE", "whitelist") == "whitelist"
     foundFriend = False
     
     for friend in legal:
         if friend == userID:
             foundFriend = True
             break
+
+        if whitelistMode:
+            continue
 
         result = fb.get_connections("me", "friends/%s" % friend)
         if len(result["data"]) > 0:
@@ -97,6 +118,8 @@ def submitHandler():
     with DB() as db:
         db.put(entry)
     
+    sendText(request.form["content"], name)
+
     return JSONResponse([entry])
 
 @app.route("/history")

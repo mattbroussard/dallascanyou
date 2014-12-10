@@ -4,3 +4,4 @@ Werkzeug==0.9.6
 gunicorn==19.1.1
 pymongo==2.7.2
 facebook-sdk==0.4.0
+twilio==3.6.13
