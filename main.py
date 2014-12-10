@@ -2,8 +2,16 @@
 
 import os, datetime, json
 from flask import Flask, Response, request
+from db import DB
 
 app = Flask(__name__, static_url_path='')
+
+class JSONResponse(Response):
+    def __init__(self, obj):
+        Response.__init__(
+            self,
+            json.dumps(obj),
+            mimetype='application/json')
 
 @app.route("/fbinit.js")
 def facebookInitHandler():
@@ -35,33 +43,27 @@ def facebookInitHandler():
 
 @app.route("/")
 def rootHandler():
-    return app.send_static_file('index.html')
+    return app.send_static_file('index.html')    
 
-def dummyResponse(content='implement the backend', userID='mattbroussard', authorName='Your Name Here (requires additional FB API call)'):
-    now = datetime.datetime.utcnow().isoformat() + "+0000"
-    return json.dumps([{
-        'userID': userID,
-        'authorName': authorName,
-        'timestamp': now,
-        'content': content,
-    }])
-    
-
-@app.route("/submit", methods=['POST'])
+@app.route("/submit", methods=['POST', 'GET'])
 def submitHandler():
-    return Response(
-        dummyResponse(request.form['message'], request.form['userID']),
-        mimetype='application/json'
-    )
+    now = datetime.datetime.utcnow().isoformat() + "+0000"
+    entry = {
+        "userID": request.form["userID"],
+        "content": request.form["content"],
+        "authorName": "This is a test",
+        "timestamp": now
+    }
+    with DB() as db:
+        db.put(entry)
+    return JSONResponse([entry])
 
 @app.route("/history")
 def historyHandler():
-    now = datetime.datetime(2014, 12, 5).isoformat()
-    return Response(
-        dummyResponse(authorName='Matt B.'),
-        mimetype='application/json'
-    )
+    with DB() as db:
+        return JSONResponse(db.get())
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+    app.config["PROPAGATE_EXCEPTIONS"] = True
     app.run(host='0.0.0.0', port=port)

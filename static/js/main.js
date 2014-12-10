@@ -120,7 +120,7 @@
             "data": {
                 "userID": userInfo.userID,
                 "accessToken": userInfo.accessToken,
-                "message": message
+                "content": message
             }
         });
 
