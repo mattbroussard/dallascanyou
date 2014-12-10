@@ -11,7 +11,8 @@ class JSONResponse(Response):
         Response.__init__(
             self,
             json.dumps(obj),
-            mimetype='application/json')
+            mimetype='application/json'
+        )
 
 @app.route("/fbinit.js")
 def facebookInitHandler():
@@ -43,7 +44,7 @@ def facebookInitHandler():
 
 @app.route("/")
 def rootHandler():
-    return app.send_static_file('index.html')    
+    return app.send_static_file('index.html')  
 
 @app.route("/submit", methods=['POST'])
 def submitHandler():

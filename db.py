@@ -1,7 +1,6 @@
 
 import os
 import pymongo
-import urlparse
 
 # don't show frontend clients the _id
 def removeId(obj):
@@ -14,9 +13,6 @@ class DB:
     client = None
     db = None
     posts = None
-
-    def __init__(self):
-        pass
 
     def __enter__(self):
         url = os.environ.get("MONGOLAB_URI", "")
