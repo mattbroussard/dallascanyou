@@ -26,9 +26,13 @@
             .attr("src", "http://graph.facebook.com/"+post.userID+"/picture?width=128")
             .appendTo(postDiv);
         
+        var text = $("<div>")
+            .addClass("post_text")
+            .appendTo(postDiv);
+
         var meta = $("<div>")
             .addClass("meta")
-            .appendTo(postDiv);
+            .appendTo(text);
         var author = $("<h3>")
             .addClass("author")
             .text(post.authorName)
@@ -43,6 +47,10 @@
         var content = $("<p>")
             .addClass("content")
             .text("Dallas, can you " + post.content + "?")
+            .appendTo(text);
+
+        var clearfix = $("<br>")
+            .addClass("clearfix")
             .appendTo(postDiv);
 
         $("#posts .post.empty").remove();

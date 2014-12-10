@@ -115,12 +115,21 @@ body {
     width: 585px;
     margin-bottom: 35px;
     text-align: left;
-    height: 100px;
     color: #2c3e50;
 
     /* just to prevent them from stacking horizontally */
     margin-left: 100px;
     margin-right: 100px;
+}
+
+.post_text {
+    float: left;
+    max-width: 450px;
+}
+
+.post .meta {
+    word-break: break-all;
+    hyphens: auto;
 }
 
 .post .portrait {
@@ -138,7 +147,8 @@ body {
 
 .post .content {
     font-size: 150%;
-    text-indent: 10px;
+    text-indent: -7px;
+    padding-left: 20px;
     margin: 0;
     margin-top: 10px;
 }
