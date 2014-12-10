@@ -45,7 +45,7 @@ def facebookInitHandler():
 def rootHandler():
     return app.send_static_file('index.html')    
 
-@app.route("/submit", methods=['POST', 'GET'])
+@app.route("/submit", methods=['POST'])
 def submitHandler():
     now = datetime.datetime.utcnow().isoformat() + "+0000"
     entry = {
