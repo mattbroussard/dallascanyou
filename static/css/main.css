@@ -37,6 +37,7 @@ body {
     display: inline-block;
     width: 560px;
     text-indent: 9px;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
 .inflight #entry {
