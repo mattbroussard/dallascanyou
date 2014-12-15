@@ -55,7 +55,7 @@ def sendText(content, name):
     dest = os.environ.get("DEST_PHONE", "")
     client = TwilioRestClient(sid, authToken)
 
-    body = "Dallas, can you %s? -%s (via http://j.mp/dallascan)" % (content, name)
+    body = "Dallas, can you %s? -%s (via http://dallascanyou.com/)" % (content, name)
 
     client.messages.create(
         body=body,
