@@ -41,8 +41,7 @@
             .addClass("timestamp")
             .text(post.timestamp)
             .attr("title", post.timestamp)
-            .appendTo(meta)
-            .timeago();
+            .appendTo(meta);
 
         var content = $("<p>")
             .addClass("content")
@@ -55,6 +54,11 @@
 
         $("#posts .post.empty").remove();
         postDiv.prependTo("#posts");
+
+        // address weird bug with timeago not working initially
+        setTimeout(function() {
+            timestamp.timeago();
+        }, 10);
 
     };
 
